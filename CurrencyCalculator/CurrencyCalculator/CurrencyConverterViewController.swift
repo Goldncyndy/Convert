@@ -1,0 +1,319 @@
+//
+//  ViewController.swift
+//  CurrencyCalculator
+//
+//  Created by Cynthia D'Phoenix on 8/4/25.
+//
+
+import UIKit
+
+class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDelegate {
+    
+    @IBOutlet weak var hamburgerButton: UIButton!
+    @IBOutlet weak var titleLabel: UILabel!
+    
+    @IBOutlet weak var fromCurrencyDropdown: UIButton!
+    @IBOutlet weak var toCurrencyDropdown: UIButton!
+    
+    @IBOutlet weak var conversionArrow: UIButton!
+    @IBOutlet weak var infoButton: UIButton!
+    
+    @IBOutlet weak var currencyTitleLabel: UILabel!
+    @IBOutlet weak var marketButton: UIButton!
+    
+    @IBOutlet weak var toCurrencyView: UIView!
+    @IBOutlet weak var fromCurrencyView: UIView!
+    
+    @IBOutlet weak var toCurrencyCodeLabel: UILabel!
+    @IBOutlet weak var fromCurrencyCodeLabel: UILabel!
+    
+    @IBOutlet weak var fromCurrencyAmounntTextField: UITextField!
+    @IBOutlet weak var toCurrencyAmountTextField: UITextField!
+    
+    @IBOutlet weak var toCurrencyCodeTextField: UITextField!
+    @IBOutlet weak var fromCurrencyCodeTextField: UITextField!
+    
+    @IBOutlet weak var marketView: UIView!
+    
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var contentView: UIView!
+    
+    @IBOutlet weak var convertButton: UIButton!
+    @IBOutlet weak var dropdownTableView: UITableView!
+    
+        var dropdownOptions = ["USD", "EUR", "PLN", "NGN", "GBP", "JPY"]
+    var activeDropdownTarget: UITextField?
+    
+    private let rateService = RateService()
+    var viewModel: ConversionViewModel?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        
+        // Initialize the viewModel
+        viewModel = ConversionViewModel()
+        setupBindings()
+        
+        dropdownTableView.delegate = self
+        dropdownTableView.dataSource = self
+        dropdownTableView.isHidden = true
+
+        fromCurrencyCodeTextField.delegate = self
+        toCurrencyCodeTextField.delegate = self
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardAndDropdown))
+        tapGesture.cancelsTouchesInView = false          // <-- IMPORTANT
+        tapGesture.delegate = self                        // <-- so we can ignore taps inside the dropdown
+        contentView.addGestureRecognizer(tapGesture)
+
+        dropdownTableView.isUserInteractionEnabled = true
+        dropdownTableView.allowsSelection = true
+        contentView.bringSubviewToFront(dropdownTableView)
+        
+        // Listen for typing to auto-convert
+        fromCurrencyAmounntTextField.addTarget(self, action: #selector(amountEditingChanged(_:)), for: .editingChanged)
+            
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Defaults (so the first conversion works immediately)
+        fromCurrencyCodeTextField.text = "USD"
+        fromCurrencyCodeLabel.text = "USD"
+        toCurrencyCodeTextField.text = "NGN"
+        toCurrencyCodeLabel.text = "NGN"
+    }
+
+    
+    // MARK: - Setup
+        func setupUI() {
+            hamburgerButton.setTitle("", for: .normal)
+            fromCurrencyDropdown.setTitle("", for: .normal)
+            toCurrencyDropdown.setTitle("", for: .normal)
+            conversionArrow.setTitle("", for: .normal)
+            infoButton.setTitle("", for: .normal)
+            
+            setupTitleLabel()
+            setupMarketButton()
+            setupCurrencyViews()
+            setupDropdownTable()
+            
+        }
+    
+    func setupDropdownTable() {
+           dropdownTableView.layer.borderWidth = 1
+           dropdownTableView.layer.borderColor = UIColor.lightGray.cgColor
+           dropdownTableView.layer.cornerRadius = 10
+           
+           dropdownTableView.translatesAutoresizingMaskIntoConstraints = false
+       }
+       
+       func setupDismissKeyboardTap() {
+           let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardAndDropdown))
+           tap.cancelsTouchesInView = false
+           view.addGestureRecognizer(tap)
+       }
+
+       @objc func dismissKeyboardAndDropdown() {
+           view.endEditing(true)
+           dropdownTableView.isHidden = true
+           activeDropdownTarget = nil
+       }
+
+    func setupTitleLabel() {
+        let line1 = "Currency"
+        let line2 = "Converter"
+        let dot = "."
+
+        let fullText = "\(line1)\n\(line2)\(dot)"
+        let attributedText = NSMutableAttributedString(string: fullText)
+
+        // Style "Currency"
+        attributedText.addAttributes([
+            .foregroundColor: UIColor.systemBlue,
+            .font: UIFont.boldSystemFont(ofSize: 42)
+        ], range: NSRange(location: 0, length: line1.count))
+
+        // Style "Converter"
+        let converterStart = line1.count + 1 // +1 for \n
+        attributedText.addAttributes([
+            .foregroundColor: UIColor.systemBlue,
+            .font: UIFont.boldSystemFont(ofSize: 42)
+        ], range: NSRange(location: converterStart, length: line2.count))
+
+        // Style the dot
+        attributedText.addAttributes([
+            .foregroundColor: UIColor.systemGreen,
+            .font: UIFont.boldSystemFont(ofSize: 42)
+        ], range: NSRange(location: fullText.count - 1, length: 1))
+
+        currencyTitleLabel.attributedText = attributedText
+    }
+    
+    func setupMarketButton() {
+        
+        setMarketAttributedTitle(text: "Mid-market exchange rate at 13:38 UTC")
+    }
+    
+    private func setMarketAttributedTitle(text: String) {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+                .foregroundColor: UIColor.systemBlue
+            ]
+            marketButton.setAttributedTitle(NSAttributedString(string: text, attributes: attributes), for: .normal)
+        }
+    
+    func setupCurrencyViews() {
+            [toCurrencyView, fromCurrencyView].forEach {
+                $0?.layer.borderWidth = 1
+                $0?.layer.borderColor = UIColor.lightGray.cgColor
+                $0?.layer.cornerRadius = 5
+            }
+
+            marketView.layer.cornerRadius = 25
+            marketView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            marketView.clipsToBounds = true
+        }
+
+    // MARK: - Button Actions
+       @IBAction func fromCurrencyDropdownTapped(_ sender: UIButton) {
+           activeDropdownTarget = fromCurrencyCodeTextField
+               dropdownTableView.isHidden = false
+               dropdownTableView.reloadData()
+       }
+
+       @IBAction func toCurrencyDropdownTapped(_ sender: UIButton) {
+           activeDropdownTarget = toCurrencyCodeTextField
+               dropdownTableView.isHidden = false
+               dropdownTableView.reloadData()
+       }
+
+       // MARK: - Dropdown Display
+       func showDropdown(below textField: UITextField) {
+           dropdownTableView.reloadData()
+           dropdownTableView.isHidden = false
+
+       }
+    
+    @IBAction func conversionArrowTapped(_ sender: Any) {
+        swapCurrencies()
+    }
+    
+    @IBAction func amountEditingChanged(_ sender: UITextField) {
+        guard let fromAmount = fromCurrencyAmounntTextField?.text,
+                  let fromCode = fromCurrencyCodeTextField?.text,
+                  let toCode = toCurrencyCodeTextField?.text else {
+                print("⚠️ One of the text fields is nil")
+                return
+            }
+
+        viewModel?.convert(
+                amountText: fromAmount,
+                fromCode: fromCode,
+                toCode: toCode
+            )
+    }
+    
+//    @objc func amountEditingChanged(_ sender: UITextField) {
+//        guard let fromAmount = fromCurrencyAmounntTextField?.text,
+//                  let fromCode = fromCurrencyCodeTextField?.text,
+//                  let toCode = toCurrencyCodeTextField?.text else {
+//                print("⚠️ One of the text fields is nil")
+//                return
+//            }
+//
+//        viewModel?.convert(
+//                amountText: fromAmount,
+//                fromCode: fromCode,
+//                toCode: toCode
+//            )
+//    }
+    
+    // MARK: - Bind ViewModel
+    private func setupBindings() {
+        viewModel?.onConversionSuccess = { [weak self] converted, timeString in
+            print("Converted:", converted, "Time:", timeString)
+                print("TextField:", self?.toCurrencyAmountTextField as Any)
+                DispatchQueue.main.async {
+                    self?.toCurrencyAmountTextField.text = converted
+                    self?.setMarketAttributedTitle(text: timeString)
+                }
+            }
+        
+        viewModel?.onConversionFailure = { [weak self] errorMessage in
+            self?.toCurrencyAmountTextField.text = ""
+            self?.setMarketAttributedTitle(text: errorMessage)
+        }
+    }
+        // MARK: - Conversion
+    func convertIfPossible() {
+        guard
+            let fromCode = fromCurrencyCodeTextField.text, !fromCode.isEmpty,
+            let toCode = toCurrencyCodeTextField.text, !toCode.isEmpty,
+            let raw = fromCurrencyAmounntTextField.text, !raw.isEmpty
+        else { return }
+        
+        let normalized = raw.replacingOccurrences(of: ",", with: ".")
+        guard let amount = Double(normalized) else { return }
+        
+        viewModel?.convert(amountText: raw, fromCode: fromCode, toCode: toCode)
+    }
+
+        
+        private func swapCurrencies() {
+            let from = fromCurrencyCodeTextField.text
+            let to = toCurrencyCodeTextField.text
+            fromCurrencyCodeTextField.text = to
+            fromCurrencyCodeLabel.text = to
+            toCurrencyCodeTextField.text = from
+            toCurrencyCodeLabel.text = from
+            
+            // already have a converted value, move it back so the user can continue chaining conversions
+            if let toVal = toCurrencyAmountTextField.text, !toVal.isEmpty {
+                fromCurrencyAmounntTextField.text = toVal
+            }
+            toCurrencyAmountTextField.text = ""
+            convertIfPossible()
+        }
+        
+        private func format(amount: Double) -> String {
+            let nf = NumberFormatter()
+            nf.numberStyle = .decimal
+            nf.maximumFractionDigits = 2
+            return nf.string(from: NSNumber(value: amount)) ?? String(format: "%.2f", amount)
+        }
+    
+    @IBAction func convertButtonTapped(_ sender: UIButton) {
+        
+        amountEditingChanged(fromCurrencyAmounntTextField)
+        
+        convertIfPossible()
+       }
+    
+//    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+//        if textField == fromCurrencyTextField {
+//            print("From Currency tapped")
+//            showDropdown(below: fromCurrencyTextField)
+//            return false // prevents keyboard
+//        } else if textField == toCurrencyTextField {
+//            print("To Currency tapped")
+//            showDropdown(below: toCurrencyTextField)
+//            return false
+//        }
+//        return true
+//    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // If the touch is inside the dropdown table, let the table handle it
+        if !dropdownTableView.isHidden,
+           let v = touch.view,
+           v.isDescendant(of: dropdownTableView) {
+            return false
+        }
+        return true
+    }
+
+    
+    }
+

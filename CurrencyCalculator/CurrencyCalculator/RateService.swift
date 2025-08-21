@@ -10,45 +10,40 @@ import Foundation
 final class RateService {
     private let session = URLSession.shared
     
-    private struct ConvertDTO: Decodable {
-        let success: Bool?
-        let date: String?
-        let result: Double?
-        let info: Info?
-        struct Info: Decodable { let rate: Double? }
+    private struct ERARatesResponse: Decodable {
+        let result: String
+        let base_code: String
+        let rates: [String: Double]
     }
     
     enum RateError: Error { case badURL, noData, decodeFailed, noResult }
     
-    /// Uses https://api.exchangerate.host/convert (no API key)
+    /// Uses https://open.er-api.com/v6/latest (no API key required)
     func convert(amount: Double, from: String, to: String,
                  completion: @escaping (Result<(converted: Double, rate: Double, timestamp: Date), Error>) -> Void) {
-        let urlString = "https://api.exchangerate.host/convert?from=\(from)&to=\(to)&amount=\(amount)"
-        guard let url = URL(string: urlString) else { return completion(.failure(RateError.badURL)) }
+        
+        let urlString = "https://open.er-api.com/v6/latest/\(from)"
+        guard let url = URL(string: urlString) else {
+            return completion(.failure(RateError.badURL))
+        }
         
         session.dataTask(with: url) { data, _, error in
             if let error = error { return completion(.failure(error)) }
             guard let data = data else { return completion(.failure(RateError.noData)) }
+            
             do {
-                let dto = try JSONDecoder().decode(ConvertDTO.self, from: data)
-                guard let converted = dto.result else { return completion(.failure(RateError.noResult)) }
-                let rate = dto.info?.rate ?? converted / max(amount, 0.000001)
+                let dto = try JSONDecoder().decode(ERARatesResponse.self, from: data)
                 
-                let date: Date = {
-                    if let ds = dto.date {
-                        let df = DateFormatter()
-                        df.timeZone = TimeZone(secondsFromGMT: 0)
-                        df.dateFormat = "yyyy-MM-dd"
-                        return df.date(from: ds) ?? Date()
-                    }
-                    return Date()
-                }()
-                completion(.success((converted, rate, date)))
+                if dto.result.lowercased() == "success",
+                   let rate = dto.rates[to] {
+                    let converted = amount * rate
+                    completion(.success((converted, rate, Date())))
+                } else {
+                    completion(.failure(RateError.noResult))
+                }
             } catch {
                 completion(.failure(RateError.decodeFailed))
             }
         }.resume()
     }
 }
-
-

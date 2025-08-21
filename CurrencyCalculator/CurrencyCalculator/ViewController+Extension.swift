@@ -6,83 +6,83 @@
 //
 
 import UIKit
-import Foundation
 
 // MARK: - TableView Delegate & Data Source
-extension ViewController: UITableViewDelegate, UITableViewDataSource {
+extension CurrencyConverterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dropdownOptions.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownCell", for: indexPath) as? DropdownTableViewCell else {
-            return UITableViewCell()
-        }
+//        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownCell", for: indexPath) as? DropdownTableViewCell else {
+//            return UITableViewCell()
+//        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownCell", for: indexPath) as! DropdownTableViewCell
         
         let code = dropdownOptions[indexPath.row]
         cell.configure(with: code)
-        cell.delegate = self
+        cell.selectionStyle = .default
         return cell
     }
 
-
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedCode = dropdownOptions[indexPath.row]
-        print("Selected: \(selectedCode)")
+            print(" Selected currency: \(selectedCode)")
 
-        fromCurrencyCodeTextField.text = selectedCode
+            if activeDropdownTarget === fromCurrencyCodeTextField {
+                fromCurrencyCodeTextField.text = selectedCode
+                fromCurrencyCodeLabel.text = selectedCode
+            } else if activeDropdownTarget === toCurrencyCodeTextField {
+                toCurrencyCodeTextField.text = selectedCode
+                toCurrencyCodeLabel.text = selectedCode
+            }
         
-        activeDropdownTarget?.text = selectedCode
-        // Update the correct textField and label based on the active target
-        if activeDropdownTarget == fromCurrencyCodeTextField {
-            fromCurrencyCodeTextField.text = selectedCode
-            fromCurrencyCodeLabel.text = selectedCode
-        } else if activeDropdownTarget == toCurrencyCodeTextField {
-            toCurrencyCodeTextField.text = selectedCode
-            toCurrencyCodeLabel.text = selectedCode
-        }
-        print("Selected: taaaaapppeeeddddddddddddddddddddd")
+        // Hide dropdown after selection
         dropdownTableView.isHidden = true
-        activeDropdownTarget?.resignFirstResponder()
-        activeDropdownTarget?.text = nil
+        activeDropdownTarget = nil
         view.endEditing(true)
+        
+        // Trigger conversion after selecting
+        convertIfPossible()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 45
     }
-
 }
 
 // MARK: - UITextField Delegate
-extension ViewController: UITextFieldDelegate {
+extension CurrencyConverterViewController: UITextFieldDelegate {
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        // Save which textField triggered the dropdown
         activeDropdownTarget = textField
-
-        dropdownTableView.reloadData()
-        dropdownTableView.isHidden = false
-        // Do not show keyboard
+        
+        // Show dropdown below tapped field
+        showDropdown(below: textField)
+        
+            if textField == fromCurrencyCodeTextField {
+                print("From Currency tapped")
+                showDropdown(below: fromCurrencyCodeTextField)
+                return false
+            } else if textField == toCurrencyCodeTextField {
+                print("To Currency tapped")
+                showDropdown(below: toCurrencyCodeTextField)
+                return false
+            }
+            return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//        textField.resignFirstResponder()
+//        dropdownTableView.isHidden = true
+//        activeDropdownTarget = nil
+//        return true
+        
+        activeDropdownTarget = textField
+        showDropdown(below: textField)
         return false
     }
-
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        dropdownTableView.isHidden = true
-        return true
-    }
 }
 
-extension ViewController: DropdownCellDelegate {
-    
-    func didSelectCurrency(code: String) {
-        // Handle what happens when a currency is selected
-          print("Selected currency: \(code)")
-          // Set to a textField
-          fromCurrencyCodeTextField.text = code
-          dropdownTableView.isHidden = true
-    }
-    
-    
-}
