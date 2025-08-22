@@ -23,6 +23,8 @@
 		CEC0C1E42E40BA6300CF243A /* CurrencyCalculatorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0C1E32E40BA6300CF243A /* CurrencyCalculatorUITests.swift */; };
 		CEC0C1E62E40BA6300CF243A /* CurrencyCalculatorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0C1E52E40BA6300CF243A /* CurrencyCalculatorUITestsLaunchTests.swift */; };
 		CEC8CEEC2E586D28001CC783 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC8CEEB2E586D28001CC783 /* Snackbar.swift */; };
+		CEC8F04E2E58CC15001329A0 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = CEC8F04D2E58CC15001329A0 /* Alamofire */; };
+		CEC8F0512E58CD8C001329A0 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CEC8F0502E58CD8C001329A0 /* DGCharts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,12 +44,29 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		CE8D50932E58BB95006DABF9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		CE1F21832E55C8EA00D80BA6 /* RateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateService.swift; sourceTree = "<group>"; };
 		CE1F21852E55CF2B00D80BA6 /* ConversionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionModel.swift; sourceTree = "<group>"; };
 		CE1F21872E55D25200D80BA6 /* ConversionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionViewModel.swift; sourceTree = "<group>"; };
 		CE2028352E44D553001A6247 /* ViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Extension.swift"; sourceTree = "<group>"; };
 		CE2028372E454BBE001A6247 /* DropdownTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropdownTableViewCell.swift; sourceTree = "<group>"; };
+		CE8D50832E58B103006DABF9 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE8D50862E58B12F006DABF9 /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
+		CE8D50892E58B157006DABF9 /* Algorithms.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Algorithms.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE8D508B2E58B17D006DABF9 /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC0C1BC2E40BA6000CF243A /* CurrencyCalculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CurrencyCalculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC0C1BF2E40BA6000CF243A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CEC0C1C12E40BA6000CF243A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -70,6 +89,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEC8F0512E58CD8C001329A0 /* DGCharts in Frameworks */,
+				CEC8F04E2E58CC15001329A0 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +111,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E1FB6B933582437E7337D0E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		CEC0C1B32E40BA6000CF243A = {
 			isa = PBXGroup;
 			children = (
@@ -97,6 +125,8 @@
 				CEC0C1D82E40BA6300CF243A /* CurrencyCalculatorTests */,
 				CEC0C1E22E40BA6300CF243A /* CurrencyCalculatorUITests */,
 				CEC0C1BD2E40BA6000CF243A /* Products */,
+				5E1FB6B933582437E7337D0E /* Pods */,
+				E1CE85AD528C0D3C8FA246B7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -204,6 +234,17 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		E1CE85AD528C0D3C8FA246B7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CE8D508B2E58B17D006DABF9 /* SwiftyJSON.framework */,
+				CE8D50892E58B157006DABF9 /* Algorithms.framework */,
+				CE8D50862E58B12F006DABF9 /* Charts.framework */,
+				CE8D50832E58B103006DABF9 /* Alamofire.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -214,12 +255,17 @@
 				CEC0C1B82E40BA6000CF243A /* Sources */,
 				CEC0C1B92E40BA6000CF243A /* Frameworks */,
 				CEC0C1BA2E40BA6000CF243A /* Resources */,
+				CE8D50932E58BB95006DABF9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = CurrencyCalculator;
+			packageProductDependencies = (
+				CEC8F04D2E58CC15001329A0 /* Alamofire */,
+				CEC8F0502E58CD8C001329A0 /* DGCharts */,
+			);
 			productName = CurrencyCalculator;
 			productReference = CEC0C1BC2E40BA6000CF243A /* CurrencyCalculator.app */;
 			productType = "com.apple.product-type.application";
@@ -292,6 +338,10 @@
 				Base,
 			);
 			mainGroup = CEC0C1B32E40BA6000CF243A;
+			packageReferences = (
+				CEC8F04C2E58CC15001329A0 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				CEC8F04F2E58CD8C001329A0 /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			productRefGroup = CEC0C1BD2E40BA6000CF243A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -603,6 +653,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HMQQ46T6BM;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
@@ -621,6 +672,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HMQQ46T6BM;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cynthia.CurrencyCalculatorUITests;
@@ -638,6 +690,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HMQQ46T6BM;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cynthia.CurrencyCalculatorUITests;
@@ -689,6 +742,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CEC8F04C2E58CC15001329A0 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		CEC8F04F2E58CD8C001329A0 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChartsOrg/Charts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CEC8F04D2E58CC15001329A0 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEC8F04C2E58CC15001329A0 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		CEC8F0502E58CD8C001329A0 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEC8F04F2E58CD8C001329A0 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		CEC0C1C82E40BA6000CF243A /* CurrencyCalculator.xcdatamodeld */ = {

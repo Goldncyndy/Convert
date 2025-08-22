@@ -44,6 +44,7 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
     @IBOutlet weak var convertButton: UIButton!
     @IBOutlet weak var dropdownTableView: UITableView!
     
+    
         var dropdownOptions = ["USD", "EUR", "PLN", "NGN", "GBP", "JPY"]
     var activeDropdownTarget: UITextField?
     
@@ -99,7 +100,6 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
             setupMarketButton()
             setupCurrencyViews()
             setupDropdownTable()
-            
         }
     
     func setupTapGesture() {
