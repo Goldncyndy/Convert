@@ -22,6 +22,7 @@
 		CEC0C1DA2E40BA6300CF243A /* CurrencyCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0C1D92E40BA6300CF243A /* CurrencyCalculatorTests.swift */; };
 		CEC0C1E42E40BA6300CF243A /* CurrencyCalculatorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0C1E32E40BA6300CF243A /* CurrencyCalculatorUITests.swift */; };
 		CEC0C1E62E40BA6300CF243A /* CurrencyCalculatorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0C1E52E40BA6300CF243A /* CurrencyCalculatorUITestsLaunchTests.swift */; };
+		CEC8CEEC2E586D28001CC783 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC8CEEB2E586D28001CC783 /* Snackbar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		CEC0C1DF2E40BA6300CF243A /* CurrencyCalculatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CurrencyCalculatorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC0C1E32E40BA6300CF243A /* CurrencyCalculatorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCalculatorUITests.swift; sourceTree = "<group>"; };
 		CEC0C1E52E40BA6300CF243A /* CurrencyCalculatorUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCalculatorUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		CEC8CEEB2E586D28001CC783 /* Snackbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snackbar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 				CE1F21832E55C8EA00D80BA6 /* RateService.swift */,
 				CE1F21852E55CF2B00D80BA6 /* ConversionModel.swift */,
 				CE1F21872E55D25200D80BA6 /* ConversionViewModel.swift */,
+				CEC8CEEB2E586D28001CC783 /* Snackbar.swift */,
 			);
 			path = CurrencyCalculator;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				CEC0C1C42E40BA6000CF243A /* CurrencyConverterViewController.swift in Sources */,
 				CEC0C1C02E40BA6000CF243A /* AppDelegate.swift in Sources */,
 				CE2028362E44D553001A6247 /* ViewController+Extension.swift in Sources */,
+				CEC8CEEC2E586D28001CC783 /* Snackbar.swift in Sources */,
 				CEC0C1C22E40BA6000CF243A /* SceneDelegate.swift in Sources */,
 				CE1F21862E55CF2B00D80BA6 /* ConversionModel.swift in Sources */,
 				CE1F21882E55D25200D80BA6 /* ConversionViewModel.swift in Sources */,

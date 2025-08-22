@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  CurrencyCalculator
 //
-//  Created by Cynthia D'Phoenix on 8/4/25.
+//  Created by Cynthia D'Phoenix on 8/20/25.
 //
 
 import UIKit
@@ -53,7 +53,7 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        
+        setUITestAccessibilityIdentifiers()
         // Initialize the viewModel
         viewModel = ConversionViewModel()
         setupBindings()
@@ -65,27 +65,25 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
 
         fromCurrencyCodeTextField.delegate = self
         toCurrencyCodeTextField.delegate = self
-        
-        // Force scrollView to calculate content size from contentView
-//        scrollView.layoutIfNeeded()
-
-        // Listen for typing to auto-convert
-        fromCurrencyAmounntTextField.addTarget(self, action: #selector(amountEditingChanged(_:)), for: .editingChanged)
-            
+         
+        Snackbar.show(message: "Hello there!", in: self.view)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // Defaults (so the first conversion works immediately)
-        fromCurrencyCodeTextField.text = "USD"
-        fromCurrencyCodeLabel.text = "USD"
-        toCurrencyCodeTextField.text = "NGN"
-        toCurrencyCodeLabel.text = "NGN"
-    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        // Force scrollView to calculate content size from contentView
+        scrollView.layoutIfNeeded()
         scrollView.contentSize = contentView.frame.size
+    }
+    
+    func setUITestAccessibilityIdentifiers() {
+        fromCurrencyCodeTextField.accessibilityIdentifier = "fromCurrencyCodeTextField"
+            fromCurrencyAmounntTextField.accessibilityIdentifier = "fromCurrencyAmounntTextField"
+            toCurrencyAmountTextField.accessibilityIdentifier = "toCurrencyAmountTextField"
+            convertButton.accessibilityIdentifier = "convertButton"
+            fromCodeView.accessibilityIdentifier = "fromCodeView"
+            toCurrencyCodeView.accessibilityIdentifier = "toCurrencyCodeView"
     }
 
     
@@ -247,8 +245,23 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         guard let fromAmount = fromCurrencyAmounntTextField?.text,
                   let fromCode = fromCurrencyCodeTextField?.text,
                   let toCode = toCurrencyCodeTextField?.text else {
-                print("⚠️ One of the text fields is nil")
+            Snackbar.show(message: "⚠️ One of the text fields is nil", isSuccess: false, in: self.view)
                 return
+            }
+        
+        // Check if any are empty
+            if fromAmount.isEmpty || fromCode.isEmpty || toCode.isEmpty {
+                Snackbar.show(message: "⚠️ Please fill in all fields", isSuccess: false, in: self.view)
+                return
+            }
+        
+        // Replace comma with dot for normalization
+            let normalized = fromAmount.replacingOccurrences(of: ",", with: ".")
+
+            if Double(normalized) == nil && !fromAmount.isEmpty {
+                // Invalid number entered -> Show Snackbar
+                Snackbar.show(message: "Invalid amount entered. Please use numbers only.", isSuccess: false, in: self.view)
+                        return
             }
 
         viewModel?.convert(
@@ -261,18 +274,25 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
     private func setupBindings() {
         viewModel?.onConversionSuccess = { [weak self] converted, timeString in
             print("Converted:", converted, "Time:", timeString)
-                print("TextField:", self?.toCurrencyAmountTextField as Any)
-                DispatchQueue.main.async {
-                    self?.toCurrencyAmountTextField.text = converted
-                    self?.setMarketAttributedTitle(text: timeString)
-                }
+
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                Snackbar.show(message: "Converted!", isSuccess: true, in: self.view)
+                self.toCurrencyAmountTextField.text = converted
+                self.setMarketAttributedTitle(text: timeString)
             }
-        
+        }
+
         viewModel?.onConversionFailure = { [weak self] errorMessage in
-            self?.toCurrencyAmountTextField.text = ""
-            self?.setMarketAttributedTitle(text: errorMessage)
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                Snackbar.show(message: errorMessage, isSuccess: false, in: self.view)
+                self.toCurrencyAmountTextField.text = ""
+                self.setMarketAttributedTitle(text: errorMessage)
+            }
         }
     }
+
         // MARK: - Conversion
     func convertIfPossible() {
         guard
@@ -281,8 +301,18 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
             let raw = fromCurrencyAmounntTextField.text, !raw.isEmpty
         else { return }
         
+        // Check if any are empty
+            if raw.isEmpty || fromCode.isEmpty || toCode.isEmpty {
+                Snackbar.show(message: "⚠️ Please fill in all fields", isSuccess: false, in: self.view)
+                return
+            }
+        
         let normalized = raw.replacingOccurrences(of: ",", with: ".")
-        guard let amount = Double(normalized) else { return }
+        guard Double(normalized) != nil else {
+                Snackbar.show(message: "Invalid amount entered. Please enter a valid number.", isSuccess: false, in: self.view)
+
+                return
+            }
         
         viewModel?.convert(amountText: raw, fromCode: fromCode, toCode: toCode)
     }
@@ -312,6 +342,8 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         }
     
     @IBAction func convertButtonTapped(_ sender: UIButton) {
+        // Listen for typing to auto-convert
+        fromCurrencyAmounntTextField.addTarget(self, action: #selector(amountEditingChanged(_:)), for: .editingChanged)
         
         amountEditingChanged(fromCurrencyAmounntTextField)
         

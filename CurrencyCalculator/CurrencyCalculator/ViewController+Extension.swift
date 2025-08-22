@@ -2,7 +2,7 @@
 //  ViewController+Extension.swift
 //  CurrencyCalculator
 //
-//  Created by Cynthia D'Phoenix on 8/7/25.
+//  Created by Cynthia D'Phoenix on 8/20/25.
 //
 
 import UIKit
@@ -41,8 +41,6 @@ extension CurrencyConverterViewController: UITableViewDelegate, UITableViewDataS
         activeDropdownTarget = nil
         view.endEditing(true)
         
-        // Trigger conversion after selecting
-        convertIfPossible()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
