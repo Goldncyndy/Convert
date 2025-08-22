@@ -33,6 +33,9 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
     @IBOutlet weak var toCurrencyCodeTextField: UITextField!
     @IBOutlet weak var fromCurrencyCodeTextField: UITextField!
     
+    @IBOutlet weak var fromCodeView: UIView!
+    @IBOutlet weak var toCurrencyCodeView: UIView!
+    
     @IBOutlet weak var marketView: UIView!
     
     @IBOutlet weak var scrollView: UIScrollView!
@@ -54,6 +57,7 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         // Initialize the viewModel
         viewModel = ConversionViewModel()
         setupBindings()
+        setupTapGesture()
         
         dropdownTableView.delegate = self
         dropdownTableView.dataSource = self
@@ -62,15 +66,9 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         fromCurrencyCodeTextField.delegate = self
         toCurrencyCodeTextField.delegate = self
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardAndDropdown))
-        tapGesture.cancelsTouchesInView = false          // <-- IMPORTANT
-        tapGesture.delegate = self                        // <-- so we can ignore taps inside the dropdown
-        contentView.addGestureRecognizer(tapGesture)
+        // Force scrollView to calculate content size from contentView
+//        scrollView.layoutIfNeeded()
 
-        dropdownTableView.isUserInteractionEnabled = true
-        dropdownTableView.allowsSelection = true
-        contentView.bringSubviewToFront(dropdownTableView)
-        
         // Listen for typing to auto-convert
         fromCurrencyAmounntTextField.addTarget(self, action: #selector(amountEditingChanged(_:)), for: .editingChanged)
             
@@ -83,6 +81,11 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         fromCurrencyCodeLabel.text = "USD"
         toCurrencyCodeTextField.text = "NGN"
         toCurrencyCodeLabel.text = "NGN"
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scrollView.contentSize = contentView.frame.size
     }
 
     
@@ -100,6 +103,34 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
             setupDropdownTable()
             
         }
+    
+    func setupTapGesture() {
+        // Background tap (to dismiss keyboard/dropdown)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardAndDropdown))
+        tapGesture.cancelsTouchesInView = false
+        tapGesture.delegate = self
+        contentView.addGestureRecognizer(tapGesture)
+        
+        // Tap for FromCurrencyCodeView
+        let tapGesture2 = UITapGestureRecognizer(target: self, action: #selector(showFromCodeDropdown))
+        tapGesture2.cancelsTouchesInView = false
+        tapGesture2.delegate = self
+        fromCodeView.addGestureRecognizer(tapGesture2)
+        fromCodeView.isUserInteractionEnabled = true
+        
+        // Tap for ToCurrencyCodeView
+        let tapGesture3 = UITapGestureRecognizer(target: self, action: #selector(showToCodeDropdown))
+        tapGesture3.cancelsTouchesInView = false
+        tapGesture3.delegate = self
+        toCurrencyCodeView.addGestureRecognizer(tapGesture3)
+        toCurrencyCodeView.isUserInteractionEnabled = true
+        
+        // Dropdown interaction
+        dropdownTableView.isUserInteractionEnabled = true
+        dropdownTableView.allowsSelection = true
+        contentView.bringSubviewToFront(dropdownTableView)
+    }
+
     
     func setupDropdownTable() {
            dropdownTableView.layer.borderWidth = 1
@@ -120,6 +151,18 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
            dropdownTableView.isHidden = true
            activeDropdownTarget = nil
        }
+    
+    @objc func showFromCodeDropdown() {
+        activeDropdownTarget = fromCurrencyCodeTextField
+            dropdownTableView.isHidden = false
+            dropdownTableView.reloadData()
+    }
+    
+    @objc func showToCodeDropdown() {
+        activeDropdownTarget = toCurrencyCodeTextField
+            dropdownTableView.isHidden = false
+            dropdownTableView.reloadData()
+    }
 
     func setupTitleLabel() {
         let line1 = "Currency"
@@ -132,20 +175,20 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         // Style "Currency"
         attributedText.addAttributes([
             .foregroundColor: UIColor.systemBlue,
-            .font: UIFont.boldSystemFont(ofSize: 42)
+            .font: UIFont.boldSystemFont(ofSize: 40)
         ], range: NSRange(location: 0, length: line1.count))
 
         // Style "Converter"
         let converterStart = line1.count + 1 // +1 for \n
         attributedText.addAttributes([
             .foregroundColor: UIColor.systemBlue,
-            .font: UIFont.boldSystemFont(ofSize: 42)
+            .font: UIFont.boldSystemFont(ofSize: 40)
         ], range: NSRange(location: converterStart, length: line2.count))
 
         // Style the dot
         attributedText.addAttributes([
             .foregroundColor: UIColor.systemGreen,
-            .font: UIFont.boldSystemFont(ofSize: 42)
+            .font: UIFont.boldSystemFont(ofSize: 40)
         ], range: NSRange(location: fullText.count - 1, length: 1))
 
         currencyTitleLabel.attributedText = attributedText
@@ -214,22 +257,6 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
                 toCode: toCode
             )
     }
-    
-//    @objc func amountEditingChanged(_ sender: UITextField) {
-//        guard let fromAmount = fromCurrencyAmounntTextField?.text,
-//                  let fromCode = fromCurrencyCodeTextField?.text,
-//                  let toCode = toCurrencyCodeTextField?.text else {
-//                print("⚠️ One of the text fields is nil")
-//                return
-//            }
-//
-//        viewModel?.convert(
-//                amountText: fromAmount,
-//                fromCode: fromCode,
-//                toCode: toCode
-//            )
-//    }
-    
     // MARK: - Bind ViewModel
     private func setupBindings() {
         viewModel?.onConversionSuccess = { [weak self] converted, timeString in
@@ -290,19 +317,6 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         
         convertIfPossible()
        }
-    
-//    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-//        if textField == fromCurrencyTextField {
-//            print("From Currency tapped")
-//            showDropdown(below: fromCurrencyTextField)
-//            return false // prevents keyboard
-//        } else if textField == toCurrencyTextField {
-//            print("To Currency tapped")
-//            showDropdown(below: toCurrencyTextField)
-//            return false
-//        }
-//        return true
-//    }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         // If the touch is inside the dropdown table, let the table handle it
@@ -313,7 +327,6 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         }
         return true
     }
-
     
     }
 

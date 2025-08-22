@@ -15,8 +15,6 @@ extension CurrencyConverterViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownCell", for: indexPath) as? DropdownTableViewCell else {
-//            return UITableViewCell()
 //        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownCell", for: indexPath) as! DropdownTableViewCell
         
@@ -75,11 +73,6 @@ extension CurrencyConverterViewController: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        textField.resignFirstResponder()
-//        dropdownTableView.isHidden = true
-//        activeDropdownTarget = nil
-//        return true
-        
         activeDropdownTarget = textField
         showDropdown(below: textField)
         return false
