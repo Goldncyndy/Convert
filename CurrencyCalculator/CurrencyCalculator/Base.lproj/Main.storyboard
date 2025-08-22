@@ -54,7 +54,7 @@
                                 <rect key="frame" x="0.0" y="99" width="414" height="797"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LEU-mq-Ir4">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="797"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Currency Converter." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dha-AZ-pft">
                                                 <rect key="frame" x="24" y="50.000000000000007" width="203.66666666666666" height="95.666666666666686"/>
@@ -265,7 +265,7 @@
                                                 </constraints>
                                             </stackView>
                                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pCE-UJ-2jr">
-                                                <rect key="frame" x="0.0" y="583.66666666666663" width="414" height="224.33333333333337"/>
+                                                <rect key="frame" x="0.0" y="583.66666666666663" width="414" height="213.33333333333337"/>
                                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="500" id="jyq-pd-rED"/>

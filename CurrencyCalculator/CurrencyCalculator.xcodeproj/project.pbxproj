@@ -113,20 +113,17 @@
 		CEC0C1BE2E40BA6000CF243A /* CurrencyCalculator */ = {
 			isa = PBXGroup;
 			children = (
-				CEC0C1BF2E40BA6000CF243A /* AppDelegate.swift */,
-				CEC0C1C12E40BA6000CF243A /* SceneDelegate.swift */,
-				CEC0C1C32E40BA6000CF243A /* CurrencyConverterViewController.swift */,
+				CEC8CEF32E587928001CC783 /* App */,
+				CEC8CEF22E58791F001CC783 /* Models */,
+				CEC8CEF12E587911001CC783 /* Views */,
+				CEC8CEF02E587905001CC783 /* ViewModel */,
+				CEC8CEEF2E5878F6001CC783 /* Services */,
+				CEC8CEEE2E5878EB001CC783 /* Utilities */,
+				CEC8CEED2E5878DA001CC783 /* Resources */,
 				CEC0C1C52E40BA6000CF243A /* Main.storyboard */,
-				CEC0C1CB2E40BA6300CF243A /* Assets.xcassets */,
 				CEC0C1CD2E40BA6300CF243A /* LaunchScreen.storyboard */,
 				CEC0C1D02E40BA6300CF243A /* Info.plist */,
 				CEC0C1C82E40BA6000CF243A /* CurrencyCalculator.xcdatamodeld */,
-				CE2028352E44D553001A6247 /* ViewController+Extension.swift */,
-				CE2028372E454BBE001A6247 /* DropdownTableViewCell.swift */,
-				CE1F21832E55C8EA00D80BA6 /* RateService.swift */,
-				CE1F21852E55CF2B00D80BA6 /* ConversionModel.swift */,
-				CE1F21872E55D25200D80BA6 /* ConversionViewModel.swift */,
-				CEC8CEEB2E586D28001CC783 /* Snackbar.swift */,
 			);
 			path = CurrencyCalculator;
 			sourceTree = "<group>";
@@ -146,6 +143,65 @@
 				CEC0C1E52E40BA6300CF243A /* CurrencyCalculatorUITestsLaunchTests.swift */,
 			);
 			path = CurrencyCalculatorUITests;
+			sourceTree = "<group>";
+		};
+		CEC8CEED2E5878DA001CC783 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CEC0C1CB2E40BA6300CF243A /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		CEC8CEEE2E5878EB001CC783 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CEC8CEEB2E586D28001CC783 /* Snackbar.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		CEC8CEEF2E5878F6001CC783 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				CE1F21832E55C8EA00D80BA6 /* RateService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CEC8CEF02E587905001CC783 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				CE1F21872E55D25200D80BA6 /* ConversionViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		CEC8CEF12E587911001CC783 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CE2028372E454BBE001A6247 /* DropdownTableViewCell.swift */,
+				CE2028352E44D553001A6247 /* ViewController+Extension.swift */,
+				CEC0C1C32E40BA6000CF243A /* CurrencyConverterViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CEC8CEF22E58791F001CC783 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CE1F21852E55CF2B00D80BA6 /* ConversionModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CEC8CEF32E587928001CC783 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CEC0C1C12E40BA6000CF243A /* SceneDelegate.swift */,
+				CEC0C1BF2E40BA6000CF243A /* AppDelegate.swift */,
+			);
+			path = App;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
