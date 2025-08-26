@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import DGCharts
 
 class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDelegate {
     
@@ -45,6 +46,8 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
     @IBOutlet weak var dropdownTableView: UITableView!
     
     
+    private var lineChartView: LineChartView!
+    
         var dropdownOptions = ["USD", "EUR", "PLN", "NGN", "GBP", "JPY"]
     var activeDropdownTarget: UITextField?
     
@@ -59,6 +62,7 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         viewModel = ConversionViewModel()
         setupBindings()
         setupTapGesture()
+        setupLineChart()
         
         dropdownTableView.delegate = self
         dropdownTableView.dataSource = self
@@ -359,6 +363,47 @@ class CurrencyConverterViewController: UIViewController, UIGestureRecognizerDele
         }
         return true
     }
+    
+    func setupLineChart() {
+        
+        // Setup Line Chart
+                lineChartView = LineChartView()
+                lineChartView.translatesAutoresizingMaskIntoConstraints = false
+                marketView.addSubview(lineChartView)
+                
+                NSLayoutConstraint.activate([
+                    lineChartView.topAnchor.constraint(equalTo: marketView.topAnchor, constant: 30),
+                    lineChartView.leadingAnchor.constraint(equalTo: marketView.leadingAnchor, constant: 16),
+                    lineChartView.trailingAnchor.constraint(equalTo: marketView.trailingAnchor, constant: -16),
+                    lineChartView.heightAnchor.constraint(equalToConstant: 300)
+                ])
+                
+                setData()
+            }
+            
+            private func setData() {
+                let values: [ChartDataEntry] = [
+                    ChartDataEntry(x: 1, y: 120),
+                    ChartDataEntry(x: 2, y: 135),
+                    ChartDataEntry(x: 3, y: 150),
+                    ChartDataEntry(x: 4, y: 170),
+                    ChartDataEntry(x: 5, y: 160),
+                    ChartDataEntry(x: 6, y: 180)
+                ]
+                
+                let set1 = LineChartDataSet(entries: values, label: "Market Price")
+                set1.colors = [.systemGreen]
+                set1.circleColors = [.systemGreen]
+                set1.lineWidth = 2
+                set1.circleRadius = 4
+                set1.mode = .cubicBezier // smooth line
+                set1.valueFont = .systemFont(ofSize: 10)
+                
+                let data = LineChartData(dataSet: set1)
+                lineChartView.data = data
+            
+        }
+
     
     }
 
