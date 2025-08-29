@@ -7,8 +7,10 @@
 
 import Foundation
 
-struct ConvertDTO: Decodable {
-    let result: Double?
-    let info: Info?
-    struct Info: Decodable { let rate: Double? }
+struct FixerResponse: Decodable {
+    let success: Bool
+    let timestamp: Int
+    let base: String
+    let date: String
+    let rates: [String: Double]
 }

@@ -10,27 +10,39 @@ import Alamofire
 
 final class RateService {
     
-    private struct ERARatesResponse: Decodable {
-        let result: String
-        let base_code: String
-        let rates: [String: Double]
+    enum RateError: Error {
+        case badURL, noData, decodeFailed, noResult
     }
     
-    enum RateError: Error { case badURL, noData, decodeFailed, noResult }
+    // Fixer.io API key
+    private let apiKey = "05e59b88446881a5375e57f3fc19588b"
+    // base URL for API call
+    private let baseURL = "https://data.fixer.io/api/latest"
     
-    /// Uses https://open.er-api.com/v6/latest (no API key required)
+    /// Convert an amount from one currency to another using Fixer.io
     func convert(amount: Double, from: String, to: String,
                  completion: @escaping (Result<(converted: Double, rate: Double, timestamp: Date), Error>) -> Void) {
         
-        let urlString = "https://open.er-api.com/v6/latest/\(from)"
+        let urlString = "\(baseURL)?access_key=\(apiKey)&symbols=\(from),\(to)"
         
-        AF.request(urlString).validate().responseDecodable(of: ERARatesResponse.self) { response in
+        AF.request(urlString).validate().responseDecodable(of: FixerResponse.self) { response in
             switch response.result {
             case .success(let dto):
-                if dto.result.lowercased() == "success",
-                   let rate = dto.rates[to] {
+                if dto.success {
+                    // Fixer free plan: all rates are relative to EUR
+                    guard let fromRate = dto.rates[from],
+                          let toRate = dto.rates[to] else {
+                        completion(.failure(RateError.noResult))
+                        return
+                    }
+                    
+                    // Cross rate calculation
+                    let eurToFrom = fromRate
+                    let eurToTo = toRate
+                    let rate = eurToTo / eurToFrom
                     let converted = amount * rate
-                    completion(.success((converted, rate, Date())))
+                    
+                    completion(.success((converted, rate, Date(timeIntervalSince1970: TimeInterval(dto.timestamp)))))
                 } else {
                     completion(.failure(RateError.noResult))
                 }
@@ -42,46 +54,3 @@ final class RateService {
     }
 }
 
-
-//import Foundation
-//
-//final class RateService {
-//    private let session = URLSession.shared
-//    
-//    private struct ERARatesResponse: Decodable {
-//        let result: String
-//        let base_code: String
-//        let rates: [String: Double]
-//    }
-//    
-//    enum RateError: Error { case badURL, noData, decodeFailed, noResult }
-//    
-//    /// Uses https://open.er-api.com/v6/latest (no API key required)
-//    func convert(amount: Double, from: String, to: String,
-//                 completion: @escaping (Result<(converted: Double, rate: Double, timestamp: Date), Error>) -> Void) {
-//        
-//        let urlString = "https://open.er-api.com/v6/latest/\(from)"
-//        guard let url = URL(string: urlString) else {
-//            return completion(.failure(RateError.badURL))
-//        }
-//        
-//        session.dataTask(with: url) { data, _, error in
-//            if let error = error { return completion(.failure(error)) }
-//            guard let data = data else { return completion(.failure(RateError.noData)) }
-//            
-//            do {
-//                let dto = try JSONDecoder().decode(ERARatesResponse.self, from: data)
-//                
-//                if dto.result.lowercased() == "success",
-//                   let rate = dto.rates[to] {
-//                    let converted = amount * rate
-//                    completion(.success((converted, rate, Date())))
-//                } else {
-//                    completion(.failure(RateError.noResult))
-//                }
-//            } catch {
-//                completion(.failure(RateError.decodeFailed))
-//            }
-//        }.resume()
-//    }
-//}
